@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using kanban.Data;
 using kanban.Repositories;
+using kanban.Services;
 
 namespace kanban
 {
@@ -33,6 +34,8 @@ namespace kanban
 
             services.AddScoped<IColumnRespository, ColumnRepository>();
             services.AddScoped<ICardRepository, CardRepository>();
+            services.AddScoped<IColumnService, ColumnService>();
+            services.AddScoped<ICardService, CardService>();
 
             services.AddControllers();
         }
