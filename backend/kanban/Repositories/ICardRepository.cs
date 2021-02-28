@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace kanban.Repositories
 {
-    interface ICardRepository
+    public interface ICardRepository
     {
-        Task<ICollection<Card>> GetCard();
+        Task<ICollection<Card>> GetCards();
         Task<Card> GetCard(int cardID);
         Task<Card> AddCard(Card card);
         Task<Card> UpdateCard(Card card);
         void DeleteCard(int cardID);
+        List<Card> GetCardsByColumn(int columnID);
     }
 }

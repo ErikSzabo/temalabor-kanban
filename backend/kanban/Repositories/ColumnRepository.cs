@@ -1,5 +1,6 @@
 ﻿using kanban.Data;
 using kanban.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,14 +17,14 @@ namespace kanban.Repositories
             this.kanbanContext = kanbanContext;
         }
 
-        public Task<Column> GetColumn(int columnID)
+        public async Task<Column> GetColumn(int columnID)
         {
-            throw new NotImplementedException();
+            return await kanbanContext.Columns.FirstOrDefaultAsync(c => c.ID == columnID);
         }
 
-        public Task<ICollection<Column>> GetColumns()
+        public async Task<ICollection<Column>> GetColumns()
         {
-            throw new NotImplementedException();
+            return await kanbanContext.Columns.ToListAsync();
         }
     }
 }

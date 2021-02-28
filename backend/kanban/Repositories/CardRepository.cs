@@ -1,5 +1,6 @@
 ﻿using kanban.Data;
 using kanban.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,29 +17,48 @@ namespace kanban.Repositories
             this.kanbanContext = kanbanContext;
         }
 
-        public Task<Card> AddCard(Card card)
+        public async Task<Card> AddCard(Card card)
         {
-            throw new NotImplementedException();
+            var result = await kanbanContext.AddAsync(card);
+            await kanbanContext.SaveChangesAsync();
+            return result.Entity;
         }
 
-        public void DeleteCard(int cardID)
+        public async void DeleteCard(int cardID)
         {
-            throw new NotImplementedException();
+            var result = await kanbanContext.Cards.FirstOrDefaultAsync(c => c.ID == cardID);
+            if (result == null) return;
+            kanbanContext.Cards.Remove(result);
+            await kanbanContext.SaveChangesAsync();
         }
 
-        public Task<ICollection<Card>> GetCard()
+        public async Task<ICollection<Card>> GetCards()
         {
-            throw new NotImplementedException();
+            return await kanbanContext.Cards.ToListAsync();
         }
 
-        public Task<Card> GetCard(int cardID)
+        public async Task<Card> GetCard(int cardID)
         {
-            throw new NotImplementedException();
+            return await kanbanContext.Cards.FirstOrDefaultAsync(c => c.ID == cardID);
         }
 
-        public Task<Card> UpdateCard(Card card)
+        public async Task<Card> UpdateCard(Card card)
         {
-            throw new NotImplementedException();
+            var result = await kanbanContext.Cards.FirstOrDefaultAsync(c => c.ID == card.ID);
+            if (result == null) return null;
+
+            result.Title = card.Title;
+            result.Deadline = card.Deadline;
+            result.Description = card.Description;
+            result.ParentID = card.ParentID;
+
+            await kanbanContext.SaveChangesAsync();
+            return result;
+        }
+
+        public List<Card> GetCardsByColumn(int columnID)
+        {
+           return kanbanContext.Cards.Where(c => c.ColumnID == columnID).ToList();
         }
     }
 }
