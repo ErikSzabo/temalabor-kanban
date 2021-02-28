@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using kanban.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,5 +12,17 @@ namespace kanban.Controllers
     [ApiController]
     public class ColumnController : ControllerBase
     {
+        private readonly IColumnService service;
+
+        public ColumnController(IColumnService service)
+        {
+            this.service = service;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetColumns()
+        {
+            return Ok(await service.GetColumnsInOrder());
+        }
     }
 }

@@ -18,12 +18,13 @@ namespace kanban.Services
 
         public Task<Column> GetColumn(int columnID)
         {
-            throw new NotImplementedException();
+            return repository.GetColumn(columnID);
         }
 
-        public Task<ICollection<Column>> GetColumnsInOrder()
+        public async Task<ICollection<Column>> GetColumnsInOrder()
         {
-            throw new NotImplementedException();
+            var columns = await repository.GetColumns();
+            return columns.OrderBy(c1 => c1.Sort).ToList();
         }
     }
 }

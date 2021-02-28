@@ -18,17 +18,18 @@ namespace kanban.Services
 
         public void DeleteCard(int cardID)
         {
-            throw new NotImplementedException();
+            // TODO: remove references and update order
+            repository.DeleteCard(cardID);
         }
 
         public Task<ICollection<Card>> GetAllCards()
         {
-            throw new NotImplementedException();
+            return repository.GetCards();
         }
 
         public Task<Card> GetCard(int cardID)
         {
-            throw new NotImplementedException();
+            return repository.GetCard(cardID);
         }
 
         public List<Card> GetCardsInOrderByColumn(int columnID)
