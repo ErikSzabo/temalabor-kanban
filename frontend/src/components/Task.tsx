@@ -54,11 +54,6 @@ const TaskElement: React.FC<Props> = ({ provided, task }) => {
   };
   const onClose = () => {
     setOpen(false);
-    setEditState({
-      title: '',
-      description: '',
-      date: new Date(),
-    });
   };
   const onSave = () => {
     state?.dispatch({
