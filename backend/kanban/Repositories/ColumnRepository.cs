@@ -19,7 +19,7 @@ namespace kanban.Repositories
 
         public async Task<Column> GetColumn(int columnID)
         {
-            return await kanbanContext.Columns.FirstOrDefaultAsync(c => c.ID == columnID);
+            return await kanbanContext.Columns.FindAsync(columnID);
         }
 
         public async Task<ICollection<Column>> GetColumns()

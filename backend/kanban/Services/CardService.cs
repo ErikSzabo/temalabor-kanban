@@ -18,7 +18,6 @@ namespace kanban.Services
 
         public void DeleteCard(int cardID)
         {
-            // TODO: remove references and update order
             repository.DeleteCard(cardID);
         }
 
@@ -36,23 +35,7 @@ namespace kanban.Services
         {
             var cards = repository.GetCardsByColumn(columnID);
             if (cards == null || cards.Count == 0) return null;
-
-            var sortedCards = new List<Card>();
-            sortedCards.Add(cards.Find(c => c.ParentID == null));
-
-            for (var i = 0; i < cards.Count; i++)
-            {
-                foreach (var card in cards)
-                {
-                    if (card.ParentID == cards[i].ID)
-                    {
-                        sortedCards.Add(card);
-                        break;
-                    }
-                }
-            }
-
-            return sortedCards;
+            return cards.OrderBy(c => c.Sort).ToList();
         }
 
         public Task<Card> MoveCard(int moveCardID, int moveAfterCardID)

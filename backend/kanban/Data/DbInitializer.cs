@@ -1,8 +1,6 @@
 ﻿using kanban.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace kanban.Data
 {
@@ -25,6 +23,18 @@ namespace kanban.Data
             foreach (var column in columns)
                 context.Columns.Add(column);
 
+            context.SaveChanges();
+
+            context.Cards.Add(new Card { ColumnID = 1, Title = "Teszt 11", Description = "Teszt leírás", Deadline = DateTime.Now, Sort = 1});
+            context.Cards.Add(new Card { ColumnID = 1, Title = "Teszt 12", Description = "Teszt leírás", Deadline = DateTime.Now, Sort = 2 });
+            context.Cards.Add(new Card { ColumnID = 1, Title = "Teszt 13", Description = "Teszt leírás", Deadline = DateTime.Now, Sort = 3 });
+
+            context.Cards.Add(new Card { ColumnID = 2, Title = "Teszt 21", Description = "Teszt leírás", Deadline = DateTime.Now, Sort = 1 });
+            context.Cards.Add(new Card { ColumnID = 2, Title = "Teszt 22", Description = "Teszt leírás", Deadline = DateTime.Now, Sort = 2 });
+            context.Cards.Add(new Card { ColumnID = 2, Title = "Teszt 23", Description = "Teszt leírás", Deadline = DateTime.Now, Sort = 3 });
+
+            context.Cards.Add(new Card { ColumnID = 3, Title = "Teszt 31", Description = "Teszt leírás", Deadline = DateTime.Now, Sort = 1 });
+            context.Cards.Add(new Card { ColumnID = 3, Title = "Teszt 32", Description = "Teszt leírás", Deadline = DateTime.Now, Sort = 2 });
             context.SaveChanges();
         }
     }

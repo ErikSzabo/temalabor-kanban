@@ -50,7 +50,7 @@ namespace kanban.Repositories
             result.Title = card.Title;
             result.Deadline = card.Deadline;
             result.Description = card.Description;
-            result.ParentID = card.ParentID;
+            result.Sort = card.Sort;
 
             await kanbanContext.SaveChangesAsync();
             return result;

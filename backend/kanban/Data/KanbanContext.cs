@@ -20,7 +20,6 @@ namespace kanban.Data
         {
             modelBuilder.Entity<Column>().ToTable("Column");
             modelBuilder.Entity<Card>().ToTable("Card");
-            modelBuilder.Entity<Card>().HasOne(c => c.Parent).WithMany().HasForeignKey(c => c.ParentID);
         }
     }
 }
