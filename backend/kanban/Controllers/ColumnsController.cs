@@ -1,4 +1,5 @@
-﻿using kanban.Models;
+﻿using kanban.Exceptions;
+using kanban.Models;
 using kanban.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,35 +10,79 @@ using System.Threading.Tasks;
 
 namespace kanban.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/columns")]
     [ApiController]
     public class ColumnsController : ControllerBase
     {
-        private readonly IColumnService service;
+        private readonly IColumnService columnService;
 
-        public ColumnsController(IColumnService service)
+        public ColumnsController(IColumnService columnService)
         {
-            this.service = service;
+            this.columnService = columnService;
         }
 
         [HttpGet]
         public async Task<ActionResult> GetColumns()
         {
-            return Ok(await service.GetColumnsInOrder());
+            try
+            {
+                return Ok(await columnService.GetColumnsInOrder());
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<Column>> GetColumn(int id)
+        [HttpGet("{columnID:int}")]
+        public async Task<ActionResult<Column>> GetColumn(int columnID)
         {
             try
             {
-                var result = await service.GetColumn(id);
-                if (result == null) return NotFound();
-                return Ok(result);
+                return Ok(await columnService.GetColumn(columnID));
             }
-            catch (Exception e)
+            catch (NotFound e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error while retrieving data.");
+                return NotFound(e.Message);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpGet("{columnID:int}/cards")]
+        public async Task<ActionResult> GetColumnCards(int columnID)
+        {
+            try
+            {
+                return Ok(await columnService.GetColumnCards(columnID));
+            }
+            catch (NotFound e)
+            {
+                return NotFound(e.Message);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPost("{columnID:int}/cards")]
+        public async Task<ActionResult<Card>> AddCardToColumn(int columnID, Card card)
+        {
+            try
+            {
+                var savedCard = await columnService.AddCardToColumn(columnID, card);
+                return Created($"api/columns/cards/{savedCard.ID}", savedCard);
+            }
+            catch (NotFound e)
+            {
+                return NotFound(e.Message);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
     }

@@ -8,7 +8,9 @@ namespace kanban.Services
 {
     public interface IColumnService
     {
-        Task<ICollection<Column>> GetColumnsInOrder();
+        Task<IEnumerable<Column>> GetColumnsInOrder();
         Task<Column> GetColumn(int columnID);
+        Task<IEnumerable<Card>> GetColumnCards(int columnID);
+        Task<Card> AddCardToColumn(int columnID, Card card);
     }
 }

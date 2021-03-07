@@ -8,11 +8,11 @@ namespace kanban.Repositories
 {
     public interface ICardRepository
     {
-        Task<ICollection<Card>> GetCards();
         Task<Card> GetCard(int cardID);
         Task<Card> AddCard(Card card);
         Task<Card> UpdateCard(Card card);
-        void DeleteCard(int cardID);
-        List<Card> GetCardsByColumn(int columnID);
+        Task DeleteCard(int cardID);
+        IEnumerable<Card> GetCardsByColumn(int columnID);
+        Task<Card> MoveCard(Card cardToMove, Card previousCard, int targetColumn);
     }
 }

@@ -1,4 +1,6 @@
-﻿using kanban.Models;
+﻿using kanban.Exceptions;
+using kanban.Models;
+using kanban.Models.Requests;
 using kanban.Repositories;
 using System;
 using System.Collections.Generic;
@@ -10,67 +12,62 @@ namespace kanban.Services
     public class CardService : ICardService
     {
         private readonly ICardRepository repository;
+        private readonly IColumnRespository columnRespository;
 
-        public CardService(ICardRepository repository)
+        public CardService(ICardRepository repository, IColumnRespository columnRespository)
         {
             this.repository = repository;
+            this.columnRespository = columnRespository;
         }
 
-        public void DeleteCard(int cardID)
+        public Task<Card> AddCard(Card card)
         {
-            repository.DeleteCard(cardID);
+            return repository.AddCard(card);
         }
 
-        public Task<ICollection<Card>> GetAllCards()
+        public async Task DeleteCard(int cardID)
         {
-            return repository.GetCards();
+            await CheckCardExistance(cardID);
+            await repository.DeleteCard(cardID);
         }
 
-        public Task<Card> GetCard(int cardID)
+        public async Task<Card> GetCard(int cardID)
         {
-            return repository.GetCard(cardID);
+            await CheckCardExistance(cardID);
+            return await repository.GetCard(cardID);
         }
 
-        public List<Card> GetCardsInOrderByColumn(int columnID)
+        public async Task<Card> UpdateCard(int cardID, Card card)
         {
-            var cards = repository.GetCardsByColumn(columnID);
-            if (cards == null || cards.Count == 0) return null;
-            return cards.OrderBy(c => c.Sort).ToList();
+            await CheckCardExistance(cardID);
+            card.ID = cardID;
+            return await repository.UpdateCard(card);
         }
 
-        public Task<Card> MoveCard(int moveCardID, int moveAfterCardID)
+        public async Task<Card> MoveCard(int moveCardID, CardMove cardMove)
         {
-            throw new NotImplementedException();
+            if (cardMove.ColumnId == null) throw new BadRequest("columnId field is required");
+            var targetColumn = (int)cardMove.ColumnId;
+            if (await columnRespository.GetColumn(targetColumn) == null) throw new NotFound("Target column not found");
+            var cardToMove = await GetCard(moveCardID);
+
+            // If there isn't a card to move after, then move the card to the top.
+            if(cardMove.PreviousCardId == null)
+            {
+                return await repository.MoveCard(cardToMove, null, targetColumn);
+            } 
+            else
+            {
+                var previousCard = await GetCard((int)cardMove.PreviousCardId);
+                if (previousCard.ColumnID != targetColumn) throw new BadRequest("Provided columnId and the previos card columnId does not match");
+                return await repository.MoveCard(cardToMove, previousCard, targetColumn);
+            }
         }
 
-        public Task<Card> MoveCardBottom(int moveCardID, int columnID)
+        private async Task CheckCardExistance(int cardID)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<Card> MoveCardTop(int moveCardID, int columnID)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Card> UpdateCard(string title, string description, DateTime deadLine)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Card> UpdateCardDeadline(int cardID, DateTime deadLine)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Card> UpdateCardDescription(int cardID, string description)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Card> UpdateCardTitle(int cardID, string title)
-        {
-            throw new NotImplementedException();
+            var card = await repository.GetCard(cardID);
+            if (card == null) throw new NotFound($"Card with id: {cardID} not found");
         }
     }
 }

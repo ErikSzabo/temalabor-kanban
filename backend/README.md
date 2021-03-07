@@ -32,7 +32,7 @@ Status: 200 OK
 Gets a column by its `id`. Returns `404 Not Found` status if the column does not exists.
 
 ```http
-GET /api/columns/{column_id}
+GET /api/columns/{columnID}
 ```
 
 **Default response**
@@ -50,10 +50,10 @@ Status: 200 OK
 
 ## Get column cards
 
-Retrieves all of the cards in order which are in the specified column. Returns `400 Bad Request` if column does not exists.
+Retrieves all of the cards in order which are in the specified column. Returns `404 Not Found` if column does not exists.
 
 ```http
-GET /api/columns/{column_id}/cards
+GET /api/columns/{columnID}/cards
 ```
 
 **Default response**
@@ -69,24 +69,24 @@ Status: 200 OK
     "title": "Card title",
     "description": "Card description",
     "deadline": "date string",
-    "column_id": 1
+    "columnID": 1
   },
   {
     "id": 2,
     "title": "Card title",
     "description": "Card description",
     "deadline": "date string",
-    "column_id": 1
+    "columnID": 1
   }
 ]
 ```
 
 ## Add a card to a column
 
-Adds a card to the end of the column. Returns `400 Bad Request` if the column does not exists.
+Adds a card to the end of the column. Returns `404 Not Found` if the column does not exists.
 
 ```http
-POST /api/columns/{column_id}/cards
+POST /api/columns/{columnID}/cards
 ```
 
 **body**:
@@ -105,61 +105,24 @@ POST /api/columns/{column_id}/cards
 Status: 201 Created
 ```
 
-## Move a card to the top of the column
-
-Moves a a card to the top of the column. If the column or the card does not exists it will return `400 Bad Request`.
-
-```http
-PUT /api/columns/{column_id}/cards/{card_id}/movetop
-```
-
-**Default response**
-
-```
-Status: 204 No content
+```json
+{
+  "id": 5,
+  "title": "Card title",
+  "description": "Card description",
+  "deadline": "date string",
+  "columnID": 3
+}
 ```
 
 # Cards
-
-## Get all cards
-
-Lists all the existing cards.
-
-```http
-GET /api/cards
-```
-
-**Default response**
-
-```
-Status: 200 OK
-```
-
-```json
-[
-  {
-    "id": 1,
-    "title": "Card title",
-    "description": "Card description",
-    "deadline": "date string",
-    "column_id": 1
-  },
-  {
-    "id": 2,
-    "title": "Card title",
-    "description": "Card description",
-    "deadline": "date string",
-    "column_id": 1
-  }
-]
-```
 
 ## Get a card
 
 Gets a card by its `id`. Returns `˙404 Not Found` if the card does not exists.
 
 ```http
-GET /api/cards/{card_id}
+GET api/columns/cards/{cardID}
 ```
 
 **Default response**
@@ -174,16 +137,16 @@ Status: 200 OK
   "title": "Card title",
   "description": "Card description",
   "deadline": "date string",
-  "column_id": 1
+  "columnID": 1
 }
 ```
 
 ## Delete a card
 
-Deletes a card by its `id`. Returns `400 Bad Request` if the card does not exists.
+Deletes a card by its `id`. Returns `404 Not Found` if the card does not exists.
 
 ```http
-DELETE /api/cards/{card_id}
+DELETE /api/columns/cards/{cardID}
 ```
 
 **Default response**
@@ -194,10 +157,10 @@ Status: 204 No Content
 
 ## Update a card
 
-Updates the card with the new values.
+Updates the card with the new values. You can't change the `columnID` here. A change to the `columnID` must be performed through the `moves` endpoint.
 
 ```http
-PUT /api/cards/{card_id}
+PUT /api/columns/cards/{cardID}
 ```
 
 **body**:
@@ -218,10 +181,19 @@ Status: 204 No Content
 
 ## Move a card
 
-Moves a card after an another. Both ids must be specified or it will return `400 Bad Request`.
+Moves a card after an another. `columnID` must be specified or it will return `400 Bad Request`. If `previousCardId` is not specified, then the card will be moved to the top of the column. In this example, the actual card will be moved to the column with the id of 1 after the card with the id of 11. If the previous card is in an another column than the `columnID` it will return `400 Bad Request`.
 
 ```http
-PUT /api/cards/{card_id}/moveafter/{previous_id}
+PUT /api/columns/cards/{cardID}/moves
+```
+
+**body**:
+
+```json
+{
+  "columnID": 1,
+  "previousCardId": 11
+}
 ```
 
 **Default response**
