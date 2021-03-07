@@ -119,10 +119,10 @@ Status: 201 Created
 
 ## Get a card
 
-Gets a card by its `id`. Returns `˙404 Not Found` if the card does not exists.
+Gets a card by its `id`. Returns `404 Not Found` if the card does not exists.
 
 ```http
-GET api/columns/cards/{cardID}
+GET /api/columns/cards/{cardID}
 ```
 
 **Default response**
