@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { CSSProperties } from 'react';
 import { DraggableProvided } from 'react-beautiful-dnd';
-import { Task } from '../lib/interfaces';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
@@ -11,9 +10,9 @@ import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import AddTaskDialog from './dialogs/AddTaskDialog';
-import { v4 as uuidv4 } from 'uuid';
 import { useTaskContext } from '../hooks/useTaskContext';
 import AreYouSureDialog from './dialogs/AreYouSureDialog';
+import { deleteCard, KanbanCard, updateCard } from '../api';
 
 interface State {
   title: string;
@@ -23,7 +22,7 @@ interface State {
 
 interface Props {
   provided: DraggableProvided;
-  task: Task;
+  card: KanbanCard;
 }
 
 const taskStyle: CSSProperties = {
@@ -36,15 +35,15 @@ const taskStyle: CSSProperties = {
   borderRadius: '3px',
 };
 
-const TaskElement: React.FC<Props> = ({ provided, task }) => {
+const TaskElement: React.FC<Props> = ({ provided, card }) => {
   const state = useTaskContext();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [open, setOpen] = useState<boolean>(false);
   const [sureOpen, setSureOpen] = useState<boolean>(false);
   const [editState, setEditState] = useState<State>({
-    title: task.title,
-    description: task.description,
-    date: task.deadline,
+    title: card.title,
+    description: card.description,
+    date: card.deadline || new Date(),
   });
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -56,24 +55,26 @@ const TaskElement: React.FC<Props> = ({ provided, task }) => {
     setOpen(false);
   };
   const onSave = () => {
-    state?.dispatch({
-      type: 'edit-task',
-      payload: {
-        old: task,
-        new: {
-          title: editState.title,
-          description: editState.description,
-          deadline: editState.date || new Date(),
-          id: uuidv4(),
-          columnId: task.columnId,
-        },
-      },
+    const newCard = {
+      title: editState.title,
+      description: editState.description,
+      deadline: editState.date || new Date(),
+      id: card.id,
+      columnID: card.columnID,
+    };
+    updateCard(newCard).then(() => {
+      state?.dispatch({
+        type: 'edit-task',
+        payload: { old: card, new: newCard },
+      });
     });
     onClose();
   };
 
   const onDelete = () => {
-    state?.dispatch({ type: 'delete-task', payload: task });
+    deleteCard(card.id).then(() => {
+      state?.dispatch({ type: 'delete-task', payload: card });
+    });
     handleClose();
     setSureOpen(false);
   };
@@ -95,7 +96,7 @@ const TaskElement: React.FC<Props> = ({ provided, task }) => {
             variant="subtitle2"
             style={{ flexGrow: 1 }}
           >
-            {task.deadline.toISOString().substr(0, 10)}
+            {new Date(card.deadline).toISOString().substr(0, 10)}
           </Typography>
           <IconButton
             aria-label="more"
@@ -142,10 +143,10 @@ const TaskElement: React.FC<Props> = ({ provided, task }) => {
           }}
         >
           <ListRoundedIcon />
-          {task.title}
+          {card.title}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
-          {task.description}
+          {card.description}
         </Typography>
       </CardContent>
       <AddTaskDialog
@@ -156,7 +157,7 @@ const TaskElement: React.FC<Props> = ({ provided, task }) => {
         setState={setEditState}
       />
       <AreYouSureDialog
-        text={`You are trying to delete a task, named: ${task.title}. Are you sure about that?`}
+        text={`You are trying to delete a task, named: ${card.title}. Are you sure about that?`}
         open={sureOpen}
         onClose={() => setSureOpen(false)}
         onAgree={onDelete}

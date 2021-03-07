@@ -64,7 +64,7 @@ namespace kanban.Repositories
         {
             if(previousCard == null)
             {
-                var firstCard = GetCardsByColumn(targetColumn).FirstOrDefault();
+                var firstCard = GetCardsByColumn(targetColumn).OrderBy(c => c.Sort).FirstOrDefault();
                 if (firstCard == null)
                 {
                     cardToMove.Sort = 0;

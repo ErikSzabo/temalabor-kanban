@@ -1,9 +1,9 @@
 import React from 'react';
-import { LocalColumns } from './interfaces';
+import { ColumnWithCards } from '../api';
 import { Action } from './state';
 
 interface Context {
-  columns: LocalColumns;
+  columns: ColumnWithCards;
   dispatch: React.Dispatch<Action>;
 }
 

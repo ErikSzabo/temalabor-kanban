@@ -1,10 +1,10 @@
 import { useContext } from 'react';
-import { LocalColumns } from '../lib/interfaces';
+import { ColumnWithCards } from '../api';
 import { Action } from '../lib/state';
 import { TaskContext } from '../lib/taskContext';
 
 interface Context {
-  columns: LocalColumns;
+  columns: ColumnWithCards;
   dispatch: React.Dispatch<Action>;
 }
 

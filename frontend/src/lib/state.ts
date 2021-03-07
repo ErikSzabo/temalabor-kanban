@@ -1,14 +1,14 @@
-import { LocalColumns, Task } from './interfaces';
+import { ColumnWithCards, KanbanCard } from '../api';
 
 export interface State {
-  columns: LocalColumns;
+  columns: ColumnWithCards;
 }
 
 export type Action =
-  | { type: 'add-new-task'; payload: Task }
-  | { type: 'delete-task'; payload: Task }
-  | { type: 'edit-task'; payload: { old: Task; new: Task } }
-  | { type: 'init'; payload: { columns: LocalColumns } };
+  | { type: 'add-new-task'; payload: KanbanCard }
+  | { type: 'delete-task'; payload: KanbanCard }
+  | { type: 'edit-task'; payload: { old: KanbanCard; new: KanbanCard } }
+  | { type: 'init'; payload: { columns: ColumnWithCards } };
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -25,24 +25,28 @@ export const reducer = (state: State, action: Action): State => {
   }
 };
 
-function addTask(state: State, task: Task): State {
+function addTask(state: State, card: KanbanCard): State {
   const newColumns = { ...state.columns };
-  newColumns[task.columnId].tasks.push(task);
+  newColumns[card.columnID].cards.push(card);
   return { columns: newColumns };
 }
 
-function deleteTask(state: State, task: Task): State {
+function deleteTask(state: State, card: KanbanCard): State {
   const newColumns = { ...state.columns };
-  const newTasks = newColumns[task.columnId].tasks;
-  newTasks.splice(newTasks.indexOf(task), 1);
-  newColumns[task.columnId].tasks = newTasks;
+  const newTasks = newColumns[card.columnID].cards;
+  newTasks.splice(newTasks.indexOf(card), 1);
+  newColumns[card.columnID].cards = newTasks;
   return { columns: newColumns };
 }
 
-function editTask(state: State, oldTask: Task, newTask: Task): State {
+function editTask(
+  state: State,
+  oldCard: KanbanCard,
+  newCard: KanbanCard
+): State {
   const newColumns = { ...state.columns };
-  const newTasks = newColumns[oldTask.columnId].tasks;
-  newTasks.splice(newTasks.indexOf(oldTask), 1, newTask);
-  newColumns[oldTask.columnId].tasks = newTasks;
+  const newTasks = newColumns[oldCard.columnID].cards;
+  newTasks.splice(newTasks.indexOf(oldCard), 1, newCard);
+  newColumns[oldCard.columnID].cards = newTasks;
   return { columns: newColumns };
 }

@@ -1,15 +1,14 @@
 import React, { ReactElement, useEffect, useReducer } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import TaskColumn from './TaskColumn';
-import { mockColumns, mockTasks } from '../lib/mock';
-import { LocalColumns } from '../lib/interfaces';
 import { reducer, Action } from '../lib/state';
 import { TaskContext } from '../lib/taskContext';
+import { getColumnsWithCards, ColumnWithCards, moveCard } from '../api';
 import Grid from '@material-ui/core/Grid';
 
 const onDragEnd = (
   result: DropResult,
-  columns: LocalColumns,
+  columns: ColumnWithCards,
   dispatch: React.Dispatch<Action>
 ) => {
   if (!result.destination) return;
@@ -18,10 +17,12 @@ const onDragEnd = (
   if (source.droppableId !== destination.droppableId) {
     const sourceColumn = columns[source.droppableId];
     const destColumn = columns[destination.droppableId];
-    const sourceItems = [...sourceColumn.tasks];
-    const destItems = [...destColumn.tasks];
+    const sourceItems = [...sourceColumn.cards];
+    const destItems = [...destColumn.cards];
     const [removed] = sourceItems.splice(source.index, 1);
-    removed.columnId = Number(destination.droppableId);
+    const previousCardId = destItems[destination.index - 1]?.id || null;
+    const newColumnId = Number(destination.droppableId);
+    removed.columnID = newColumnId;
     destItems.splice(destination.index, 0, removed);
     dispatch({
       type: 'init',
@@ -30,19 +31,23 @@ const onDragEnd = (
           ...columns,
           [source.droppableId]: {
             ...sourceColumn,
-            tasks: sourceItems,
+            cards: sourceItems,
           },
           [destination.droppableId]: {
             ...destColumn,
-            tasks: destItems,
+            cards: destItems,
           },
         },
       },
     });
+    moveCard(removed.id, previousCardId, newColumnId).catch(() => {
+      // Do something
+    });
   } else {
     const column = columns[source.droppableId];
-    const copiedItems = [...column.tasks];
+    const copiedItems = [...column.cards];
     const [removed] = copiedItems.splice(source.index, 1);
+    const previousCardId = copiedItems[destination.index - 1]?.id || null;
     copiedItems.splice(destination.index, 0, removed);
     dispatch({
       type: 'init',
@@ -51,10 +56,13 @@ const onDragEnd = (
           ...columns,
           [source.droppableId]: {
             ...column,
-            tasks: copiedItems,
+            cards: copiedItems,
           },
         },
       },
+    });
+    moveCard(removed.id, previousCardId, column.id).catch(() => {
+      // Do something
     });
   }
 };
@@ -65,14 +73,9 @@ function ColumnList(): ReactElement {
   });
 
   useEffect(() => {
-    const container: LocalColumns = {};
-    mockColumns.data.columns.forEach((col) => {
-      container[col.id] = {
-        ...col,
-        tasks: mockTasks.data.tasks.filter((task) => task.columnId === col.id),
-      };
+    getColumnsWithCards().then((columns) => {
+      dispatch({ type: 'init', payload: { columns } });
     });
-    dispatch({ type: 'init', payload: { columns: container } });
   }, []);
 
   return (
@@ -88,7 +91,7 @@ function ColumnList(): ReactElement {
                   {(provided) => (
                     <TaskColumn
                       provided={provided}
-                      tasks={column.tasks}
+                      cards={column.cards}
                       column={column}
                     />
                   )}

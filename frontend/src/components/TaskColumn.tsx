@@ -1,6 +1,6 @@
 import React, { CSSProperties, useState } from 'react';
 import { Draggable, DroppableProvided } from 'react-beautiful-dnd';
-import { Column, Task } from '../lib/interfaces';
+import { Column } from '../api';
 import TaskElement from './Task';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
@@ -11,7 +11,7 @@ import Paper from '@material-ui/core/Paper';
 import Badge from '@material-ui/core/Badge';
 import { withStyles, createStyles } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { v4 as uuidv4 } from 'uuid';
+import { KanbanCard, createCard } from '../api';
 
 const StyledBadge = withStyles(() =>
   createStyles({
@@ -37,7 +37,7 @@ const topNavStyle: CSSProperties = {
 
 interface Props {
   provided: DroppableProvided;
-  tasks: Task[];
+  cards: KanbanCard[];
   column: Column;
 }
 
@@ -47,10 +47,9 @@ interface State {
   date?: Date;
 }
 
-const TaskColumn: React.FC<Props> = ({ provided, tasks, column }) => {
+const TaskColumn: React.FC<Props> = ({ provided, cards, column }) => {
   const matches = useMediaQuery('(max-width:600px)');
   const state = useTaskContext();
-  const columns = state?.columns;
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [addState, setAddState] = useState<State>({
     title: '',
@@ -74,15 +73,16 @@ const TaskColumn: React.FC<Props> = ({ provided, tasks, column }) => {
   };
 
   const handleTaskAdding = () => {
-    state?.dispatch({
-      type: 'add-new-task',
-      payload: {
-        title: addState.title,
-        description: addState.description,
-        deadline: addState.date || new Date(),
-        id: uuidv4(),
-        columnId: column.id,
-      },
+    createCard({
+      title: addState.title,
+      description: addState.description,
+      deadline: addState.date || new Date(),
+      columnID: column.id,
+    }).then((card) => {
+      state?.dispatch({
+        type: 'add-new-task',
+        payload: card,
+      });
     });
     resetAddState();
   };
@@ -92,10 +92,7 @@ const TaskColumn: React.FC<Props> = ({ provided, tasks, column }) => {
       <div style={topStyle}>
         <div style={topNavStyle}>
           <div style={{ display: 'flex', flexGrow: 1 }}>
-            <StyledBadge
-              badgeContent={columns![column.id].tasks.length}
-              color="primary"
-            >
+            <StyledBadge badgeContent={cards.length} color="primary">
               <Typography variant="h6">{column.name}</Typography>
             </StyledBadge>
           </div>
@@ -116,15 +113,15 @@ const TaskColumn: React.FC<Props> = ({ provided, tasks, column }) => {
         ref={provided.innerRef}
         style={containerStyle}
       >
-        {tasks.map((task, index) => {
+        {cards.map((card, index) => {
           return (
             <Draggable
-              key={task.id}
-              draggableId={`${column.id}-${task.id}`}
+              key={card.id}
+              draggableId={`${column.id}-${card.id}`}
               index={index}
             >
               {(provided) => {
-                return <TaskElement provided={provided} task={task} />;
+                return <TaskElement provided={provided} card={card} />;
               }}
             </Draggable>
           );
