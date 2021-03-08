@@ -19,6 +19,6 @@ namespace kanban.Models
         public int Sort { get; set; }
 
         [JsonIgnore]
-        public ICollection<Card> Cards { get; set; }
+        public ICollection<Card> Cards { get; }
     }
 }

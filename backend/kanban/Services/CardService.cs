@@ -46,9 +46,9 @@ namespace kanban.Services
 
         public async Task<Card> MoveCard(int moveCardID, CardMove cardMove)
         {
-            if (cardMove.ColumnId == null) throw new BadRequest("columnId field is required");
+            if (cardMove.ColumnId == null) throw new BadRequestException("columnId field is required");
             var targetColumn = (int)cardMove.ColumnId;
-            if (await columnRespository.GetColumn(targetColumn) == null) throw new NotFound("Target column not found");
+            if (await columnRespository.GetColumn(targetColumn) == null) throw new NotFoundException("Target column not found");
             var cardToMove = await GetCard(moveCardID);
 
             // If there isn't a card to move after, then move the card to the top.
@@ -59,7 +59,7 @@ namespace kanban.Services
             else
             {
                 var previousCard = await GetCard((int)cardMove.PreviousCardId);
-                if (previousCard.ColumnID != targetColumn) throw new BadRequest("Provided columnId and the previos card columnId does not match");
+                if (previousCard.ColumnID != targetColumn) throw new BadRequestException("Provided columnId and the previos card columnId does not match");
                 return await repository.MoveCard(cardToMove, previousCard, targetColumn);
             }
         }
@@ -67,7 +67,7 @@ namespace kanban.Services
         private async Task CheckCardExistance(int cardID)
         {
             var card = await repository.GetCard(cardID);
-            if (card == null) throw new NotFound($"Card with id: {cardID} not found");
+            if (card == null) throw new NotFoundException($"Card with id: {cardID} not found");
         }
     }
 }

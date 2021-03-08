@@ -55,7 +55,7 @@ namespace kanban.Services
         private async Task CheckColumnExistance(int columnID)
         {
             var column = await columnRepo.GetColumn(columnID);
-            if (column == null) throw new NotFound("Column not found");
+            if (column == null) throw new NotFoundException("Column not found");
         }
     }
 }

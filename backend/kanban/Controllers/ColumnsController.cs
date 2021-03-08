@@ -31,6 +31,7 @@ namespace kanban.Controllers
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
+                throw;
             }
         }
 
@@ -41,13 +42,14 @@ namespace kanban.Controllers
             {
                 return Ok(await columnService.GetColumn(columnID));
             }
-            catch (NotFound e)
+            catch (NotFoundException e)
             {
                 return NotFound(e.Message);
             }
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
+                throw;
             }
         }
 
@@ -58,13 +60,14 @@ namespace kanban.Controllers
             {
                 return Ok(await columnService.GetColumnCards(columnID));
             }
-            catch (NotFound e)
+            catch (NotFoundException e)
             {
                 return NotFound(e.Message);
             }
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
+                throw;
             }
         }
 
@@ -74,15 +77,16 @@ namespace kanban.Controllers
             try
             {
                 var savedCard = await columnService.AddCardToColumn(columnID, card);
-                return Created($"api/columns/cards/{savedCard.ID}", savedCard);
+                return Created(new Uri($"api/columns/cards/{ savedCard.ID }"), savedCard);
             }
-            catch (NotFound e)
+            catch (NotFoundException e)
             {
                 return NotFound(e.Message);
             }
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
+                throw;
             }
         }
     }

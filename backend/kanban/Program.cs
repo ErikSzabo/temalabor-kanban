@@ -8,9 +8,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using kanban.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace kanban
 {
+    [SuppressMessage("Design", "CA1052:Static holder types should be Static or NotInheritable", Justification = "<Pending>")]
     public class Program
     {
         public static void Main(string[] args)
@@ -30,7 +33,7 @@ namespace kanban
                     var context = services.GetRequiredService<KanbanContext>();
                     DbInitializer.Initialize(context);
                 }
-                catch (Exception ex)
+                catch (DbUpdateException ex)
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
                     logger.LogError(ex, "An error occurred creating the DB.");

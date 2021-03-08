@@ -4,6 +4,7 @@ using kanban.Models.Requests;
 using kanban.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,13 +30,14 @@ namespace kanban.Controllers
             {
                 return Ok(await service.GetCard(cardID));
             }
-            catch (NotFound e)
+            catch (NotFoundException e)
             {
                 return NotFound(e.Message);
             }
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error while retrieving data.");
+                throw;
             }
         }
 
@@ -47,13 +49,14 @@ namespace kanban.Controllers
                 await service.DeleteCard(cardID);
                 return StatusCode(StatusCodes.Status204NoContent, "Card deleted");
             }
-            catch (NotFound e)
+            catch (NotFoundException e)
             {
                 return NotFound(e.Message);
             }
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error while retrieving data.");
+                throw;
             }
         }
 
@@ -65,13 +68,14 @@ namespace kanban.Controllers
                 await service.UpdateCard(cardID, card);
                 return NoContent();
             }
-            catch (NotFound e)
+            catch (NotFoundException e)
             {
                 return NotFound(e.Message);
             }
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error while retrieving data.");
+                throw;
             }
         }
 
@@ -83,17 +87,18 @@ namespace kanban.Controllers
                 await service.MoveCard(cardID, cardMove);
                 return Ok(cardMove);
             }
-            catch(NotFound e)
+            catch(NotFoundException e)
             {
                 return NotFound(e.Message);
             }
-            catch(BadRequest e)
+            catch(BadRequestException e)
             {
                 return BadRequest(e.Message);
             }
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error while retrieving data.");
+                throw;
             }
         }
     }

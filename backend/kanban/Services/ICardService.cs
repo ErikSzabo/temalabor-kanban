@@ -11,7 +11,7 @@ namespace kanban.Services
     {
         Task<Card> GetCard(int cardID);
         Task<Card> MoveCard(int moveCardID, CardMove cardMove);
-        Task<Card> UpdateCard(int id, Card card);
+        Task<Card> UpdateCard(int cardID, Card card);
         Task<Card> AddCard(Card card);
         Task DeleteCard(int cardID);
     }
