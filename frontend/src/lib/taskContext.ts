@@ -1,5 +1,5 @@
 import React from 'react';
-import { ColumnWithCards } from '../api';
+import { ColumnWithCards } from './api';
 import { Action } from './state';
 
 interface Context {

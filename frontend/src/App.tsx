@@ -1,5 +1,5 @@
 import React from 'react';
-import ColumnList from './components/ColumnList';
+import KanbanBoard from './components/KanbanBoard';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import blue from '@material-ui/core/colors/blue';
 import './App.css';
@@ -19,7 +19,7 @@ const App: React.FC<unknown> = () => {
   return (
     <MuiThemeProvider theme={THEME}>
       <Container maxWidth="xl">
-        <ColumnList />
+        <KanbanBoard />
       </Container>
     </MuiThemeProvider>
   );

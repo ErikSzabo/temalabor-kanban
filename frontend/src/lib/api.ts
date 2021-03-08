@@ -54,11 +54,7 @@ export async function createCard(card: CardCreate): Promise<KanbanCard> {
         accepts: 'application/json',
       },
       method: 'POST',
-      body: JSON.stringify({
-        title: card.title,
-        description: card.title,
-        deadline: card.deadline,
-      }),
+      body: JSON.stringify(card),
     }
   );
   handleStatusError(response);

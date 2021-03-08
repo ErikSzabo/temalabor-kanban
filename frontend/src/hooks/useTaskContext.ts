@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { ColumnWithCards } from '../api';
+import { ColumnWithCards } from '../lib/api';
 import { Action } from '../lib/state';
 import { TaskContext } from '../lib/taskContext';
 

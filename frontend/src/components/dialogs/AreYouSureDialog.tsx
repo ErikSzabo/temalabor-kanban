@@ -26,11 +26,11 @@ const AreYouSureDialog: React.FC<Props> = ({
         <DialogContentText>{text}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary" variant="contained">
-          Cancel
-        </Button>
         <Button onClick={onAgree} color="primary" variant="contained" autoFocus>
           Do it!
+        </Button>
+        <Button onClick={onClose} color="secondary" variant="contained">
+          Cancel
         </Button>
       </DialogActions>
     </Dialog>
