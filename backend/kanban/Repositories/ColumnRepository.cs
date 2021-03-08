@@ -23,9 +23,9 @@ namespace kanban.Repositories
             return column;
         }
 
-        public async Task<ICollection<Column>> GetColumns()
+        public async Task<List<Column>> GetColumns()
         {
-            return await kanbanContext.Columns.ToListAsync();
+            return await kanbanContext.Columns.OrderBy(c => c.Sort).ToListAsync();
         }
     }
 }

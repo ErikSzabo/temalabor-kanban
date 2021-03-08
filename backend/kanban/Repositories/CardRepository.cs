@@ -26,13 +26,13 @@ namespace kanban.Repositories
 
         public async Task DeleteCard(int cardID)
         {
-            var result = await kanbanContext.Cards.FirstOrDefaultAsync(c => c.ID == cardID);
+            var result = await kanbanContext.Cards.FindAsync(cardID);
             if (result == null) return;
             kanbanContext.Cards.Remove(result);
             await kanbanContext.SaveChangesAsync();
         }
 
-        public async Task<ICollection<Card>> GetCards()
+        public async Task<List<Card>> GetCards()
         {
             return await kanbanContext.Cards.ToListAsync();
         }
@@ -55,16 +55,35 @@ namespace kanban.Repositories
             return result;
         }
 
-        public IEnumerable<Card> GetCardsByColumn(int columnID)
+        public async Task<List<Card>> GetCardsByColumn(int columnID)
         {
-           return kanbanContext.Cards.Where(c => c.ColumnID == columnID);
+           return await kanbanContext.Cards
+                    .Where(c => c.ColumnID == columnID)
+                    .OrderBy(c => c.Sort)
+                    .ToListAsync();
+        }
+
+        public async Task<Card> GetFirstCardInColumn(int columnID)
+        {
+            return await kanbanContext.Cards
+                    .Where(c => c.ColumnID == columnID)
+                    .OrderBy(c => c.Sort)
+                    .FirstOrDefaultAsync();
+        }
+
+        public async Task<Card> GetLastCardInColumn(int columnID)
+        {
+            return await kanbanContext.Cards
+                    .Where(c => c.ColumnID == columnID)
+                    .OrderByDescending(c => c.Sort)
+                    .FirstOrDefaultAsync();
         }
 
         public async Task<Card> MoveCard(Card cardToMove, Card previousCard, int targetColumn)
         {
             if(previousCard == null)
             {
-                var firstCard = GetCardsByColumn(targetColumn).OrderBy(c => c.Sort).FirstOrDefault();
+                var firstCard = await GetFirstCardInColumn(targetColumn);
                 if (firstCard == null)
                 {
                     cardToMove.Sort = 0;
@@ -75,9 +94,9 @@ namespace kanban.Repositories
                 else
                 {
                     int firstSort = firstCard.Sort;
-                    kanbanContext.Cards.AsParallel()
+                    await kanbanContext.Cards
                         .Where(c => c.ColumnID == targetColumn)
-                        .ForAll(c => c.Sort++);
+                        .ForEachAsync(c => c.Sort++);
 
                     cardToMove.Sort = firstSort;
                     cardToMove.ColumnID = targetColumn;
@@ -88,9 +107,9 @@ namespace kanban.Repositories
 
             int sort = previousCard.Sort;
             // Increment sort for everything after the previos card 
-            kanbanContext.Cards.AsParallel()
+            await kanbanContext.Cards
                 .Where(c =>  c.Sort > previousCard.Sort && c.ColumnID == previousCard.ColumnID)
-                .ForAll(c => c.Sort++);
+                .ForEachAsync(c => c.Sort++);
 
             // Update the card and save everything
             cardToMove.ColumnID = previousCard.ColumnID;

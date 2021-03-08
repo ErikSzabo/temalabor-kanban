@@ -26,25 +26,26 @@ namespace kanban.Services
             return column;
         }
 
-        public async Task<IEnumerable<Card>> GetColumnCards(int columnID)
+        public async Task<List<Card>> GetColumnCards(int columnID)
         {
             await CheckColumnExistance(columnID);
-            var cards = cardRepo.GetCardsByColumn(columnID);
-            if (cards == null || cards.Count() == 0) return new List<Card>();
-            return cards.OrderBy(c => c.Sort);
+            var cards = await cardRepo.GetCardsByColumn(columnID);
+            if (cards == null) return new List<Card>();
+            return cards;
         }
 
-        public async Task<IEnumerable<Column>> GetColumnsInOrder()
+        public async Task<List<Column>> GetColumnsInOrder()
         {
             var columns = await columnRepo.GetColumns();
-            return columns.OrderBy(c1 => c1.Sort);
+            if (columns == null) return new List<Column>();
+            return columns;
         }
 
         public async Task<Card> AddCardToColumn(int columnID, Card card)
         {
             await CheckColumnExistance(columnID);
             card.ColumnID = columnID;
-            var lastCard = cardRepo.GetCardsByColumn(columnID).OrderByDescending(c => c.Sort).FirstOrDefault();
+            var lastCard = await cardRepo.GetLastCardInColumn(columnID);
             var sort = lastCard == null ? 0 : lastCard.Sort + 1;
             card.Sort = sort;
             var savedCard = await cardRepo.AddCard(card);

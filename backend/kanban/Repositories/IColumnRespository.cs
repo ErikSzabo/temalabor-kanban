@@ -8,7 +8,7 @@ namespace kanban.Repositories
 {
     public interface IColumnRespository
     {
-        Task<ICollection<Column>> GetColumns();
+        Task<List<Column>> GetColumns();
         Task<Column> GetColumn(int columnID);
     }
 }

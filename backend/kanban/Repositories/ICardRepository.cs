@@ -12,7 +12,9 @@ namespace kanban.Repositories
         Task<Card> AddCard(Card card);
         Task<Card> UpdateCard(Card card);
         Task DeleteCard(int cardID);
-        IEnumerable<Card> GetCardsByColumn(int columnID);
+        Task<List<Card>> GetCardsByColumn(int columnID);
+        Task<Card> GetFirstCardInColumn(int columnID);
+        Task<Card> GetLastCardInColumn(int columnID);
         Task<Card> MoveCard(Card cardToMove, Card previousCard, int targetColumn);
     }
 }
