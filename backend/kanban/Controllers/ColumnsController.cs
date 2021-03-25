@@ -77,7 +77,7 @@ namespace kanban.Controllers
             try
             {
                 var savedCard = await columnService.AddCardToColumn(columnID, card);
-                return Created(new Uri($"api/columns/cards/{ savedCard.ID }"), savedCard);
+                return Created(new Uri($"/api/columns/cards/{ savedCard.ID }", UriKind.Relative), savedCard);
             }
             catch (NotFoundException e)
             {
