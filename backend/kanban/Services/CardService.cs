@@ -59,7 +59,7 @@ namespace kanban.Services
             else
             {
                 var previousCard = await GetCard((int)cardMove.PreviousCardId);
-                if (previousCard.ColumnID != targetColumn) throw new BadRequestException("Provided columnId and the previos card columnId does not match");
+                if (previousCard.ColumnID != targetColumn) throw new BadRequestException("Provided columnId and the previous card columnId does not match");
                 return await repository.MoveCard(cardToMove, previousCard, targetColumn);
             }
         }

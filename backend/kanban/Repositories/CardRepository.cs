@@ -57,10 +57,10 @@ namespace kanban.Repositories
 
         public async Task<List<Card>> GetCardsByColumn(int columnID)
         {
-           return await kanbanContext.Cards
-                    .Where(c => c.ColumnID == columnID)
-                    .OrderBy(c => c.Sort)
-                    .ToListAsync();
+            return await kanbanContext.Cards
+                     .Where(c => c.ColumnID == columnID)
+                     .OrderBy(c => c.Sort)
+                     .ToListAsync();
         }
 
         public async Task<Card> GetFirstCardInColumn(int columnID)
@@ -81,38 +81,53 @@ namespace kanban.Repositories
 
         public async Task<Card> MoveCard(Card cardToMove, Card previousCard, int targetColumn)
         {
-            if(previousCard == null)
+            // If the doesn't have a previos card, the card should be moved to the top
+            if (previousCard == null)
             {
+                // If we doesn't have any card in the column, we just add the card with the position of 0
                 var firstCard = await GetFirstCardInColumn(targetColumn);
                 if (firstCard == null)
                 {
-                    cardToMove.Sort = 0;
-                    cardToMove.ColumnID = targetColumn;
-                    await kanbanContext.SaveChangesAsync();
-                    return cardToMove;
-                }
-                else
-                {
-                    int firstSort = firstCard.Sort;
-                    await kanbanContext.Cards
-                        .Where(c => c.ColumnID == targetColumn)
-                        .ForEachAsync(c => c.Sort++);
+                    return await MoveCardTopToEmptyColumn(cardToMove, targetColumn);
+                } 
 
-                    cardToMove.Sort = firstSort;
-                    cardToMove.ColumnID = targetColumn;
-                    await kanbanContext.SaveChangesAsync();
-                    return cardToMove;
-                }
+                // If we have the first card, then this card will get its place and every other card
+                // position will be incremented
+                return await MoveCardTop(cardToMove, firstCard, targetColumn);
             }
 
-            int sort = previousCard.Sort;
-            // Increment sort for everything after the previos card 
-            await kanbanContext.Cards
-                .Where(c =>  c.Sort > previousCard.Sort && c.ColumnID == previousCard.ColumnID)
-                .ForEachAsync(c => c.Sort++);
+            // If we have the previous card, increment position for everything after the previos card
+            // then insert the card at the previous card position + 1
+            return await MoveCardAfterAnother(cardToMove, previousCard, targetColumn);
+        }
 
-            // Update the card and save everything
-            cardToMove.ColumnID = previousCard.ColumnID;
+
+        private async Task<Card> MoveCardTop(Card cardToMove, Card currentFirstCard, int targetColumn) 
+        {
+            int firstSort = currentFirstCard.Sort;
+            await kanbanContext.Database.ExecuteSqlInterpolatedAsync($"UPDATE [Card] SET [Sort] = [Sort] + 1 WHERE [ColumnID] = {targetColumn};");
+            cardToMove.Sort = firstSort;
+            cardToMove.ColumnID = targetColumn;
+            await kanbanContext.SaveChangesAsync();
+            return cardToMove;
+        }
+
+        private async Task<Card> MoveCardTopToEmptyColumn(Card cardToMove, int targetColumn)
+        {
+            cardToMove.Sort = 0;
+            cardToMove.ColumnID = targetColumn;
+            await kanbanContext.SaveChangesAsync();
+            return cardToMove;
+        }
+
+        private async Task<Card> MoveCardAfterAnother(Card cardToMove, Card previousCard, int targetColumn)
+        {
+            int sort = previousCard.Sort;
+            await kanbanContext.Database.ExecuteSqlInterpolatedAsync(
+                    $"UPDATE [Card] SET [Sort] = [Sort] + 1 WHERE [ColumnID] = {targetColumn} AND [Sort] > {sort};"
+                );
+
+            cardToMove.ColumnID = targetColumn;
             cardToMove.Sort = sort + 1;
 
             await kanbanContext.SaveChangesAsync();
