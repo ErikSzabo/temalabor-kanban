@@ -16,7 +16,7 @@ const ErrorDialog: React.FC<Props> = ({ open, onClose }) => {
       open={open}
       autoHideDuration={5000}
       onClose={onClose}
-      message="Server error, check your internet connection"
+      message="Server error"
     />
   );
 };
