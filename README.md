@@ -26,7 +26,7 @@ npm start
 
 ## Project structure
 
-Frontend is located at the frontend directory.
+Frontend source code is located at the `frontend/src` directory.
 
 ```bash
 ├───components
@@ -56,14 +56,79 @@ You will see a board when you open the app in the browser, which is essentially 
 
 ## Installation Requirements
 
-- .NET SDK 5.0 with IIS Express
-- Microsoft SQL Server localdb running
+- .NET SDK 5.0+ with IIS Express
+- Microsoft SQL Server 2016+ localdb running
 - Frameworks
-  - ASP.NET Core
-  - .NET Core
+  - ASP.NET Core 5.0.3+
+  - .NET Core 5.0.3+
 - Nuget packages installed
   - Microsoft.EntityFrameworkCore.SqlServer 5.0.3
   - Microsoft.EntityFrameworkCore.Design 5.0.3
 - Visual Studio 2019+
 
 To start the backend, setup the kanban project as the startup project and hit the green arrow in Visual Studio.
+
+## Project sturcture
+
+There are 2 projects. Kanban and KanbanTests. Let's start with the actual project, kanban.
+
+```bash
+├───Controllers
+│   ├───CardsController.cs
+│   └───ColumnsController.cs
+├───Data
+│   ├───DbInitializer.cs
+│   └───KanbanContext.cs
+├───Exceptions
+│   ├───BadRequestException.cs
+│   └───NotFoundException.cs
+├───Migrations
+│   ├───20210308181750_InitialCreate.cs
+│   ├───20210308181750_InitialCreate.Designer.cs
+│   └───KanbanContextModelSnapshot.cs
+├───Models
+│   ├───Requests
+│   │   └───CardMove.cs
+│   ├───Card.cs
+│   └───Column.cs
+├───Properties
+│   └───launchSettings.json
+├───Repositories
+│   ├───CardRepository.cs
+│   ├───ColumnRepository.cs
+│   ├───ICardRepository.cs
+│   └───IColumnRespository.cs
+├───Services
+    ├───CardService.cs
+    ├───ColumnService.cs
+    ├───ICardService.cs
+    └───IColumnService.cs
+```
+
+In the `Controllers` directory we can find the Card and the Column asp.net web api controllers. These controllers are just sending responses to the incoming requests by the help of the services. To see the documentation for the available endpoints [click here](backend/README.md).
+
+In the `Data` folder, **KanbanContext** is a DbContext from EntityFrameworkCore. It defines the two main entites (Column, Card). **DbInitializer** is used to seed the database with the default columns.
+
+In the `Exceptions` folder, we have same simple exceptions named after http responses. This helps the controller to determine what response it should send back to the client. These exceptions can be thrown inside services.
+
+Inside the `Models` directory, there are the two (Database) Entity model, Card and Column. Under `Requests` we can find a file named CardMove, which is essentially a Data Transfer Object (DTO). This is required in order to move a Card.
+
+Repository pattern interfaces and implementation can be found in the `Repositories` directory. These repositories do not check input parameters and do not make validation. If you do something wrong, you going to get built in C# errors and EF Core errors. That's the reason why **services** exists. Services are providing the logic for the controllers. If something is wrong they going to throw an appropriate error. Services located at the `Services` folder.
+
+**Dependency tree** (layers)
+
+```
+Controllers -> Services -> Repositories -> EntityFrameworkCore
+```
+
+Which means, Controllers depends on Services, Services depends on Repositories and so on.
+
+## Tests
+
+The test project is named KanbanTests. To run tests in Visual Studio, right click on the project (in the solution explorer) and click: "Run tests".
+
+Only the Card service has unit tests.
+
+## Endpoints
+
+Again, if you want to see the documentation for the available endpoints [click here](backend/README.md).
