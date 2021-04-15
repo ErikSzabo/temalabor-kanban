@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\kanban\Kanban.csproj" />
+    <ProjectReference Include="..\kanban\Kanban.Api.csproj" />
   </ItemGroup>
 
 </Project>

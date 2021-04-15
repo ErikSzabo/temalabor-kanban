@@ -6,7 +6,7 @@ using Kanban.Bll;
 using Kanban.Bll.Exceptions;
 using Kanban.Bll.Models;
 
-namespace Kanban.Controllers
+namespace Kanban.Api.Controllers
 {
     [Route("api/columns/cards")]
     [ApiController]

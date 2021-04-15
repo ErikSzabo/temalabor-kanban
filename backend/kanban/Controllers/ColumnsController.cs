@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
-namespace Kanban.Controllers
+namespace Kanban.Api.Controllers
 {
     [Route("api/columns")]
     [ApiController]
