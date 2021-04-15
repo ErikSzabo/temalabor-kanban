@@ -70,50 +70,27 @@ To start the backend, setup the kanban project as the startup project and hit th
 
 ## Project sturcture
 
-There are 2 projects. Kanban and KanbanTests. Let's start with the actual project, kanban.
+There are 4 projects. Kanban.Api (kanban), Kanban.Bll, Kanban.Data and KanbanTests.
 
 ```bash
-├───Controllers
-│   ├───CardsController.cs
-│   └───ColumnsController.cs
-├───Data
-│   ├───DbInitializer.cs
-│   └───KanbanContext.cs
-├───Exceptions
-│   ├───BadRequestException.cs
-│   └───NotFoundException.cs
-├───Migrations
-│   ├───20210308181750_InitialCreate.cs
-│   ├───20210308181750_InitialCreate.Designer.cs
-│   └───KanbanContextModelSnapshot.cs
-├───Models
-│   ├───Requests
-│   │   └───CardMove.cs
-│   ├───Card.cs
-│   └───Column.cs
-├───Properties
-│   └───launchSettings.json
-├───Repositories
-│   ├───CardRepository.cs
-│   ├───ColumnRepository.cs
-│   ├───ICardRepository.cs
-│   └───IColumnRespository.cs
-├───Services
-    ├───CardService.cs
-    ├───ColumnService.cs
-    ├───ICardService.cs
-    └───IColumnService.cs
+├───kanban
+│   ├───Controllers
+│   └───Properties
+├───Kanban.Bll
+│   ├───Exceptions
+│   └───Models
+├───Kanban.Data
+│   ├───Migrations
+│   └───Repositories
+└───KanbanTests
 ```
 
-In the `Controllers` directory we can find the Card and the Column asp.net web api controllers. These controllers are just sending responses to the incoming requests by the help of the services. To see the documentation for the available endpoints [click here](backend/README.md).
+The kanban directory is created with the solution. This is the main project (`Kanban.Api`). ASP.NET web api controllers can be found here. There are two of them: Column- and Card controller. These controllers are just sending responses to the incoming requests by the help of the services. To see the documentation for the available endpoints [click here](backend/README.md).
 
-In the `Data` folder, **KanbanContext** is a DbContext from EntityFrameworkCore. It defines the two main entites (Column, Card). **DbInitializer** is used to seed the database with the default columns.
+`Kanban.Bll` project contains the business logic for the application. We have a Column- and Card service here. Services are dependent on the Kanban.Data project. In the `Models` folder, there DTOs (Data Transfer Objects) for communication. In the `Exceptions` folder, we have same simple exceptions named after http responses. This helps the controller to determine what response it should send back to the client. These exceptions can be thrown inside services.
 
-In the `Exceptions` folder, we have same simple exceptions named after http responses. This helps the controller to determine what response it should send back to the client. These exceptions can be thrown inside services.
-
-Inside the `Models` directory, there are the two (Database) Entity model, Card and Column. Under `Requests` we can find a file named CardMove, which is essentially a Data Transfer Object (DTO). This is required in order to move a Card.
-
-Repository pattern interfaces and implementation can be found in the `Repositories` directory. These repositories do not check input parameters and do not make validation. If you do something wrong, you going to get built in C# errors and EF Core errors. That's the reason why **services** exists. Services are providing the logic for the controllers. If something is wrong they going to throw an appropriate error. Services located at the `Services` folder.
+In the `Kanban.Data` project, **KanbanContext** is a DbContext from EntityFrameworkCore. It defines the two main entites (Column, Card). **DbInitializer** is used to seed the database with the default columns.
+Repository pattern interfaces and implementations can be found in the `Repositories` directory. These repositories do not check input parameters and do not make validation. If you do something wrong, you going to get built in C# errors and EF Core errors. That's the reason why **services** exists. Services are providing the logic for the controllers. If something is wrong, they going to throw an appropriate error.
 
 **Dependency tree** (layers)
 
@@ -125,10 +102,24 @@ Which means, Controllers depends on Services, Services depends on Repositories a
 
 ## Tests
 
-The test project is named KanbanTests. To run tests in Visual Studio, right click on the project (in the solution explorer) and click: "Run tests".
+The test project is named `KanbanTests`. To run tests in Visual Studio, right click on the project (in the solution explorer) and click: "Run tests".
 
 Only the Card service has unit tests.
 
 ## Endpoints
 
 Again, if you want to see the documentation for the available endpoints [click here](backend/README.md).
+
+## Migrations
+
+To create a new migration navigate to the `backend` folder and write:
+
+```bash
+dotnet ef migrations add <migration-name> --startup-project "kanban" --project "Kanban.Data"
+```
+
+To update (or create) the databse, navigate to the `backend/kanban` folder and write:
+
+```bash
+dotnet ef database update
+```
