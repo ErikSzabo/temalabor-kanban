@@ -76,9 +76,9 @@ namespace KanbanTests
             return MoveCardAfterAnother(cardToMove, previousCard, targetColumn);
         }
 
-        public Task<Card> UpdateCard(Card card)
+        public Task<Card> UpdateCard(int cardID, Card card)
         {
-            var result = store.Find(c => c.ID == card.ID);
+            var result = store.Find(c => c.ID == cardID);
             if (result == null) return null;
 
             result.Title = card.Title;

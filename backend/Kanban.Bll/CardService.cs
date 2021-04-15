@@ -20,47 +20,47 @@ namespace Kanban.Bll
             this.columnRespository = columnRespository;
         }
 
-        public Task<Card> AddCard(Card card)
-        {
-            return repository.AddCard(card);
-        }
-
         public async Task DeleteCard(int cardID)
         {
             await CheckCardExistance(cardID);
             await repository.DeleteCard(cardID);
         }
 
-        public async Task<Card> GetCard(int cardID)
+        public async Task<CardDto> GetCard(int cardID)
         {
             await CheckCardExistance(cardID);
-            return await repository.GetCard(cardID);
+            var card = await repository.GetCard(cardID);
+            return new CardDto(card);
         }
 
-        public async Task<Card> UpdateCard(int cardID, Card card)
+        public async Task<CardDto> UpdateCard(int cardID, CardUpdateDto card)
         {
             await CheckCardExistance(cardID);
-            card.ID = cardID;
-            return await repository.UpdateCard(card);
+            var newCard = new Card() { Title = card.Title, Description = card.Description, Deadline = card.Deadline };
+            var savedCard = await repository.UpdateCard(cardID, newCard);
+            return new CardDto(savedCard);
         }
 
-        public async Task<Card> MoveCard(int moveCardID, CardMove cardMove)
+        public async Task<CardDto> MoveCard(int moveCardID, CardMove cardMove)
         {
             if (cardMove.ColumnId == null) throw new BadRequestException("columnId field is required");
             var targetColumn = (int)cardMove.ColumnId;
             if (await columnRespository.GetColumn(targetColumn) == null) throw new NotFoundException("Target column not found");
-            var cardToMove = await GetCard(moveCardID);
+            await CheckCardExistance(moveCardID);
+            var cardToMove = await repository.GetCard(moveCardID);
 
             // If there isn't a card to move after, then move the card to the top.
             if(cardMove.PreviousCardId == null)
             {
-                return await repository.MoveCard(cardToMove, null, targetColumn);
+                var movedCard = await repository.MoveCard(cardToMove, null, targetColumn);
+                return new CardDto(movedCard);
             } 
             else
             {
-                var previousCard = await GetCard((int)cardMove.PreviousCardId);
+                var previousCard = await repository.GetCard((int)cardMove.PreviousCardId);
                 if (previousCard.ColumnID != targetColumn) throw new BadRequestException("Provided columnId and the previous card columnId does not match");
-                return await repository.MoveCard(cardToMove, previousCard, targetColumn);
+                var movedCard = await repository.MoveCard(cardToMove, previousCard, targetColumn);
+                return new CardDto(movedCard);
             }
         }
 

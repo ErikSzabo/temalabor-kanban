@@ -7,7 +7,7 @@ namespace Kanban.Data.Repositories
     {
         Task<Card> GetCard(int cardID);
         Task<Card> AddCard(Card card);
-        Task<Card> UpdateCard(Card card);
+        Task<Card> UpdateCard(int cardID, Card card);
         Task DeleteCard(int cardID);
         Task<List<Card>> GetCardsByColumn(int columnID);
         Task<Card> GetFirstCardInColumn(int columnID);

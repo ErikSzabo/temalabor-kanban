@@ -1,4 +1,5 @@
-﻿using Kanban.Data;
+﻿using Kanban.Bll.Models;
+using Kanban.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,9 @@ namespace Kanban.Bll
 {
     public interface IColumnService
     {
-        Task<List<Column>> GetColumnsInOrder();
-        Task<Column> GetColumn(int columnID);
-        Task<List<Card>> GetColumnCards(int columnID);
-        Task<Card> AddCardToColumn(int columnID, Card card);
+        Task<List<ColumnDto>> GetColumnsInOrder();
+        Task<ColumnDto> GetColumn(int columnID);
+        Task<List<CardDto>> GetColumnCards(int columnID);
+        Task<CardDto> AddCardToColumn(int columnID, CardDto card);
     }
 }

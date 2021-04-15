@@ -1,4 +1,5 @@
 ﻿using Kanban.Bll.Exceptions;
+using Kanban.Bll.Models;
 using Kanban.Data;
 using Kanban.Data.Repositories;
 using System;
@@ -19,37 +20,37 @@ namespace Kanban.Bll
             this.cardRepo = cardRepo;
         }
 
-        public async Task<Column> GetColumn(int columnID)
+        public async Task<ColumnDto> GetColumn(int columnID)
         {
             await CheckColumnExistance(columnID);
             var column = await columnRepo.GetColumn(columnID);
-            return column;
+            return new ColumnDto(column.ID, column.Name);
         }
 
-        public async Task<List<Card>> GetColumnCards(int columnID)
+        public async Task<List<CardDto>> GetColumnCards(int columnID)
         {
             await CheckColumnExistance(columnID);
             var cards = await cardRepo.GetCardsByColumn(columnID);
-            if (cards == null) return new List<Card>();
-            return cards;
+            if (cards == null) return new List<CardDto>();
+            return cards.Select(card => new CardDto(card)).ToList();
         }
 
-        public async Task<List<Column>> GetColumnsInOrder()
+        public async Task<List<ColumnDto>> GetColumnsInOrder()
         {
             var columns = await columnRepo.GetColumns();
-            if (columns == null) return new List<Column>();
-            return columns;
+            if (columns == null) return new List<ColumnDto>();
+            return columns.Select(c => new ColumnDto(c.ID, c.Name)).ToList();
         }
 
-        public async Task<Card> AddCardToColumn(int columnID, Card card)
+        public async Task<CardDto> AddCardToColumn(int columnID, CardDto card)
         {
             await CheckColumnExistance(columnID);
-            card.ColumnID = columnID;
+            var newCard = new Card() { Title = card.Title, Description = card.Description, Deadline = card.Deadline, ColumnID = columnID };
             var lastCard = await cardRepo.GetLastCardInColumn(columnID);
             var sort = lastCard == null ? 0 : lastCard.Sort + 1;
-            card.Sort = sort;
-            var savedCard = await cardRepo.AddCard(card);
-            return savedCard;
+            newCard.Sort = sort;
+            var savedCard = await cardRepo.AddCard(newCard);
+            return new CardDto(savedCard);
         }
 
         private async Task CheckColumnExistance(int columnID)

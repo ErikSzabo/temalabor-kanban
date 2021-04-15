@@ -40,9 +40,9 @@ namespace Kanban.Data.Repositories
             return await kanbanContext.Cards.FindAsync(cardID);
         }
 
-        public async Task<Card> UpdateCard(Card card)
+        public async Task<Card> UpdateCard(int cardID, Card card)
         {
-            var result = await kanbanContext.Cards.FindAsync(card.ID);
+            var result = await kanbanContext.Cards.FindAsync(cardID);
             if (result == null) return null;
 
             result.Title = card.Title;

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Kanban.Data;
 using Kanban.Bll;
 using Kanban.Bll.Exceptions;
 using Kanban.Bll.Models;
@@ -57,7 +56,7 @@ namespace Kanban.Api.Controllers
         }
 
         [HttpPut("{cardID:int}")]
-        public async Task<ActionResult> UpdateCard(int cardID, Card card)
+        public async Task<ActionResult> UpdateCard(int cardID, [FromBody] CardUpdateDto card)
         {
             try
             {
@@ -76,12 +75,12 @@ namespace Kanban.Api.Controllers
         }
 
         [HttpPut("{cardID:int}/moves")]
-        public async Task<ActionResult> MoveCard(int cardID, CardMove cardMove)
+        public async Task<ActionResult<CardDto>> MoveCard(int cardID, [FromBody] CardMove cardMove)
         {
             try
             {
-                await service.MoveCard(cardID, cardMove);
-                return Ok(cardMove);
+                var result = await service.MoveCard(cardID, cardMove);
+                return Ok(result);
             }
             catch(NotFoundException e)
             {

@@ -1,9 +1,10 @@
 ﻿using Kanban.Bll;
 using Kanban.Bll.Exceptions;
-using Kanban.Data;
+using Kanban.Bll.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Kanban.Api.Controllers
@@ -20,7 +21,7 @@ namespace Kanban.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetColumns()
+        public async Task<ActionResult<List<ColumnDto>>> GetColumns()
         {
             try
             {
@@ -34,7 +35,7 @@ namespace Kanban.Api.Controllers
         }
 
         [HttpGet("{columnID:int}")]
-        public async Task<ActionResult<Column>> GetColumn(int columnID)
+        public async Task<ActionResult<ColumnDto>> GetColumn(int columnID)
         {
             try
             {
@@ -52,7 +53,7 @@ namespace Kanban.Api.Controllers
         }
 
         [HttpGet("{columnID:int}/cards")]
-        public async Task<ActionResult> GetColumnCards(int columnID)
+        public async Task<ActionResult<List<CardDto>>> GetColumnCards(int columnID)
         {
             try
             {
@@ -70,7 +71,7 @@ namespace Kanban.Api.Controllers
         }
 
         [HttpPost("{columnID:int}/cards")]
-        public async Task<ActionResult<Card>> AddCardToColumn(int columnID, Card card)
+        public async Task<ActionResult<CardDto>> AddCardToColumn(int columnID, [FromBody] CardDto card)
         {
             try
             {

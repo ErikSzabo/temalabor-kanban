@@ -9,10 +9,9 @@ namespace Kanban.Bll
 {
     public interface ICardService
     {
-        Task<Card> GetCard(int cardID);
-        Task<Card> MoveCard(int moveCardID, CardMove cardMove);
-        Task<Card> UpdateCard(int cardID, Card card);
-        Task<Card> AddCard(Card card);
+        Task<CardDto> GetCard(int cardID);
+        Task<CardDto> MoveCard(int moveCardID, CardMove cardMove);
+        Task<CardDto> UpdateCard(int cardID, CardUpdateDto card);
         Task DeleteCard(int cardID);
     }
 }
