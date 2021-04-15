@@ -26,7 +26,7 @@ namespace KanbanTests
             var card = new Card() { ID = 2, Title = "Test", ColumnID = 1, Sort = 2 };
             await cardRepo.AddCard(card);
             var currentDate = DateTime.Now;
-            var newCard = new CardUpdateDto("Test2", "Test", currentDate);
+            var newCard = new CardDto(1, 1, "Test2", "Test", currentDate);
             var updatedCard = await cardService.UpdateCard(2, newCard);
             Assert.Equal("Test2", updatedCard.Title);
             Assert.Equal("Test", updatedCard.Description);
@@ -36,7 +36,7 @@ namespace KanbanTests
         [Fact]
         public async void TestUpdateNonExisting()
         {
-            await Assert.ThrowsAsync<NotFoundException>(() => cardService.UpdateCard(98765, new CardUpdateDto("", "", DateTime.Now)));
+            await Assert.ThrowsAsync<NotFoundException>(() => cardService.UpdateCard(98765, new CardDto(1, 1, "", "", DateTime.Now)));
         }
 
         [Fact]
