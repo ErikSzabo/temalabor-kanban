@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Kanban.Models
+namespace Kanban.Data
 {
     public class Column
     {

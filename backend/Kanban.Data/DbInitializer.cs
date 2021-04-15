@@ -1,5 +1,4 @@
-﻿using Kanban.Models;
-using System;
+﻿using System;
 using System.Linq;
 
 namespace Kanban.Data

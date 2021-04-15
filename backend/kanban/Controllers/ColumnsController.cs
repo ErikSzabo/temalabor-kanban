@@ -1,11 +1,9 @@
-﻿using Kanban.Exceptions;
-using Kanban.Models;
+﻿using Kanban.Data;
+using Kanban.Exceptions;
 using Kanban.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Kanban.Controllers

@@ -1,6 +1,6 @@
-﻿using Kanban.Exceptions;
-using Kanban.Models;
-using Kanban.Repositories;
+﻿using Kanban.Data;
+using Kanban.Exceptions;
+using Kanban.Data.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;

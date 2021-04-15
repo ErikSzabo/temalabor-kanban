@@ -1,4 +1,5 @@
-﻿using Kanban.Models;
+﻿using Kanban.Data;
+using Kanban.Models;
 using Kanban.Repositories;
 using System;
 using System.Collections.Generic;

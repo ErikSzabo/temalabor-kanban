@@ -1,10 +1,7 @@
-﻿using Kanban.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Kanban.Repositories
+namespace Kanban.Data.Repositories
 {
     public interface IColumnRespository
     {

@@ -1,12 +1,10 @@
-﻿using Kanban.Data;
-using Kanban.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Kanban.Repositories
+namespace Kanban.Data.Repositories
 {
     public class CardRepository : ICardRepository
     {
