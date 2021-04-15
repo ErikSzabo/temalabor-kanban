@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace kanban.Models
+namespace Kanban.Models
 {
     public class Card
     {

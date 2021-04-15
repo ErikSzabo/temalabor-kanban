@@ -1,7 +1,7 @@
-using kanban.Exceptions;
-using kanban.Models;
-using kanban.Models.Requests;
-using kanban.Services;
+using Kanban.Exceptions;
+using Kanban.Models;
+using Kanban.Models.Requests;
+using Kanban.Services;
 using System;
 using Xunit;
 

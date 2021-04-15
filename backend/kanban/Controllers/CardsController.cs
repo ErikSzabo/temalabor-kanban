@@ -1,7 +1,7 @@
-﻿using kanban.Exceptions;
-using kanban.Models;
-using kanban.Models.Requests;
-using kanban.Services;
+﻿using Kanban.Exceptions;
+using Kanban.Models;
+using Kanban.Models.Requests;
+using Kanban.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace kanban.Controllers
+namespace Kanban.Controllers
 {
     [Route("api/columns/cards")]
     [ApiController]

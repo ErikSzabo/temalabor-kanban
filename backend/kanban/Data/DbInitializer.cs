@@ -1,8 +1,8 @@
-﻿using kanban.Models;
+﻿using Kanban.Models;
 using System;
 using System.Linq;
 
-namespace kanban.Data
+namespace Kanban.Data
 {
     public static class DbInitializer
     {

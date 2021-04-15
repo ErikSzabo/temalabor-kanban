@@ -11,11 +11,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using kanban.Data;
-using kanban.Repositories;
-using kanban.Services;
+using Kanban.Data;
+using Kanban.Repositories;
+using Kanban.Services;
 
-namespace kanban
+namespace Kanban
 {
     public class Startup
     {
