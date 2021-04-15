@@ -1,9 +1,6 @@
 ﻿using Kanban.Data;
-using Kanban.Models;
-using Kanban.Repositories;
-using System;
+using Kanban.Data.Repositories;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace KanbanTests

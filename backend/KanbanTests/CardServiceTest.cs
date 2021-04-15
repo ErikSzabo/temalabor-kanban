@@ -1,6 +1,5 @@
 using Kanban.Data;
 using Kanban.Exceptions;
-using Kanban.Models;
 using Kanban.Models.Requests;
 using Kanban.Services;
 using System;
