@@ -45,7 +45,7 @@ namespace Kanban.Bll
         public async Task<CardDto> AddCardToColumn(int columnID, CardDto card)
         {
             await CheckColumnExistance(columnID);
-            var newCard = new Card() { Title = card.Title, Description = card.Description, Deadline = card.Deadline, ColumnID = columnID };
+            var newCard = new Card() { Title = card.Title, Description = card.Description, Deadline = (DateTime)card.Deadline, ColumnID = columnID };
             var lastCard = await cardRepo.GetLastCardInColumn(columnID);
             var sort = lastCard == null ? 0 : lastCard.Sort + 1;
             newCard.Sort = sort;

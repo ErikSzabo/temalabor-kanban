@@ -33,10 +33,10 @@ namespace Kanban.Bll
             return new CardDto(card);
         }
 
-        public async Task<CardDto> UpdateCard(int cardID, CardUpdateDto card)
+        public async Task<CardDto> UpdateCard(int cardID, CardDto card)
         {
             await CheckCardExistance(cardID);
-            var newCard = new Card() { Title = card.Title, Description = card.Description, Deadline = card.Deadline };
+            var newCard = new Card() { Title = card.Title, Description = card.Description, Deadline = (DateTime)card.Deadline };
             var savedCard = await repository.UpdateCard(cardID, newCard);
             return new CardDto(savedCard);
         }

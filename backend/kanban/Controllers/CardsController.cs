@@ -56,7 +56,7 @@ namespace Kanban.Api.Controllers
         }
 
         [HttpPut("{cardID:int}")]
-        public async Task<ActionResult> UpdateCard(int cardID, [FromBody] CardUpdateDto card)
+        public async Task<ActionResult> UpdateCard(int cardID, [FromBody] CardDto card)
         {
             try
             {

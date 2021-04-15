@@ -11,7 +11,7 @@ namespace Kanban.Bll
     {
         Task<CardDto> GetCard(int cardID);
         Task<CardDto> MoveCard(int moveCardID, CardMove cardMove);
-        Task<CardDto> UpdateCard(int cardID, CardUpdateDto card);
+        Task<CardDto> UpdateCard(int cardID, CardDto card);
         Task DeleteCard(int cardID);
     }
 }

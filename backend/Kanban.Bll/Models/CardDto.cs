@@ -23,7 +23,7 @@ namespace Kanban.Bll.Models
         public string Description { get; set; }
 
         [Required] 
-        public DateTime Deadline { get; set; }
+        public DateTime? Deadline { get; set; }
 
         public CardDto(int iD, int columnID, string title, string description, DateTime deadline)
         {
