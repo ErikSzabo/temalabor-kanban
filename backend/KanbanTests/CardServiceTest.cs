@@ -78,9 +78,9 @@ namespace KanbanTests
             await cardRepo.AddCard(card1);
             await cardRepo.AddCard(card2);
 
-            await Assert.ThrowsAsync<BadRequestException>(() => cardService.MoveCard(7, new CardMove() { ColumnId = 3, PreviousCardId = 8 }));
-            await Assert.ThrowsAsync<NotFoundException>(() => cardService.MoveCard(7, new CardMove() { ColumnId = 98765, PreviousCardId = 8 }));
-            await Assert.ThrowsAsync<BadRequestException>(() => cardService.MoveCard(7, new CardMove() { ColumnId = null, PreviousCardId = 8 }));
+            await Assert.ThrowsAsync<BadRequestException>(() => cardService.MoveCard(7, new CardMoveDto() { ColumnId = 3, PreviousCardId = 8 }));
+            await Assert.ThrowsAsync<NotFoundException>(() => cardService.MoveCard(7, new CardMoveDto() { ColumnId = 98765, PreviousCardId = 8 }));
+            await Assert.ThrowsAsync<BadRequestException>(() => cardService.MoveCard(7, new CardMoveDto() { ColumnId = null, PreviousCardId = 8 }));
         }
     }
 }

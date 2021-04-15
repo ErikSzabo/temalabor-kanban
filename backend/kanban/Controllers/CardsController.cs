@@ -75,7 +75,7 @@ namespace Kanban.Api.Controllers
         }
 
         [HttpPut("{cardID:int}/moves")]
-        public async Task<ActionResult<CardDto>> MoveCard(int cardID, [FromBody] CardMove cardMove)
+        public async Task<ActionResult<CardDto>> MoveCard(int cardID, [FromBody] CardMoveDto cardMove)
         {
             try
             {

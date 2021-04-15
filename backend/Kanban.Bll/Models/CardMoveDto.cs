@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Kanban.Bll.Models
 {
-    public class CardMove
+    public class CardMoveDto
     {
         [Required]
         public int? ColumnId { get; set; }

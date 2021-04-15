@@ -41,7 +41,7 @@ namespace Kanban.Bll
             return new CardDto(savedCard);
         }
 
-        public async Task<CardDto> MoveCard(int moveCardID, CardMove cardMove)
+        public async Task<CardDto> MoveCard(int moveCardID, CardMoveDto cardMove)
         {
             if (cardMove.ColumnId == null) throw new BadRequestException("columnId field is required");
             var targetColumn = (int)cardMove.ColumnId;
