@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Kanban.Models.Requests
+namespace Kanban.Bll.Models
 {
     public class CardMove
     {

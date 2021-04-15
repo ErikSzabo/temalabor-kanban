@@ -8,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Kanban.Data;
 using Kanban.Data.Repositories;
-using Kanban.Services;
+using Kanban.Bll;
 
 namespace Kanban
 {

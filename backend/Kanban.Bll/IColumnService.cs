@@ -1,11 +1,10 @@
 ﻿using Kanban.Data;
-using Kanban.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Kanban.Services
+namespace Kanban.Bll
 {
     public interface IColumnService
     {

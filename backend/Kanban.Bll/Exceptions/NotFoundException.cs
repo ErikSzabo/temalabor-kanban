@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Kanban.Exceptions
+namespace Kanban.Bll.Exceptions
 {
     public class NotFoundException : Exception
     {

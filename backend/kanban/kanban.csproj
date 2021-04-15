@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kanban.Data\Kanban.Data.csproj" />
+    <ProjectReference Include="..\Kanban.Bll\Kanban.Bll.csproj" />
   </ItemGroup>
 
 

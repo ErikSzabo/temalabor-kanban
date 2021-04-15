@@ -1,12 +1,12 @@
-﻿using Kanban.Data;
-using Kanban.Exceptions;
+﻿using Kanban.Bll.Exceptions;
+using Kanban.Data;
 using Kanban.Data.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Kanban.Services
+namespace Kanban.Bll
 {
     public class ColumnService : IColumnService
     {
