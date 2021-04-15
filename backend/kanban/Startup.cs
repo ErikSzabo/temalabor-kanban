@@ -6,8 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Kanban.Data;
-using Kanban.Data.Repositories;
 using Kanban.Bll;
 
 namespace Kanban
@@ -24,13 +22,7 @@ namespace Kanban
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<KanbanContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DbConnection")));
-
-            services.AddScoped<IColumnRespository, ColumnRepository>();
-            services.AddScoped<ICardRepository, CardRepository>();
-            services.AddScoped<IColumnService, ColumnService>();
-            services.AddScoped<ICardService, CardService>();
+            services.AddKanbanBll(Configuration.GetConnectionString("DbConnection"));
 
             services.AddControllers();
         }
