@@ -54,26 +54,19 @@ namespace KanbanTests
             return Task.FromResult(cards[0]);
         }
 
-        public async Task<Card> MoveCard(Card cardToMove, Card previousCard, int targetColumn)
+        public Task<Card> MoveCardAfterAnother(Card cardToMove, Card previousCard, int targetColumn)
         {
-            if (previousCard == null)
-            {
-                InvokedWithNullPreviosCard++;
-                // If we doesn't have any card in the column, we just add the card with the position of 0
-                var firstCard = await GetFirstCardInColumn(targetColumn);
-                if (firstCard == null)
-                {
-                    return MoveCardTopToEmptyColumn(cardToMove, targetColumn);
-                }
+            throw new System.NotImplementedException();
+        }
 
-                // If we have the first card, then this card will get its place and every other card
-                // position will be incremented
-                return MoveCardTop(cardToMove, firstCard, targetColumn);
-            }
+        public Task<Card> MoveCardTop(Card cardToMove, Card currentFirstCard, int targetColumn)
+        {
+            throw new System.NotImplementedException();
+        }
 
-            // If we have the previous card, increment position for everything after the previos card
-            // then insert the card at the previous card position + 1
-            return MoveCardAfterAnother(cardToMove, previousCard, targetColumn);
+        public Task<Card> MoveCardTopInEmptyColumn(Card cardToMove, int targetColumn)
+        {
+            throw new System.NotImplementedException();
         }
 
         public Task<Card> UpdateCard(int cardID, Card card)
@@ -86,35 +79,6 @@ namespace KanbanTests
             result.Description = card.Description;
 
             return Task.FromResult(result);
-        }
-
-        private Card MoveCardTop(Card cardToMove, Card currentFirstCard, int targetColumn)
-        {
-            int firstSort = currentFirstCard.Sort;
-            foreach(var card in store)
-                if(card.ColumnID == targetColumn) card.Sort++;
-            cardToMove.Sort = firstSort;
-            cardToMove.ColumnID = targetColumn;
-            return cardToMove;
-        }
-
-        private Card MoveCardTopToEmptyColumn(Card cardToMove, int targetColumn)
-        {
-            cardToMove.Sort = 0;
-            cardToMove.ColumnID = targetColumn;
-            return cardToMove;
-        }
-
-        private Card MoveCardAfterAnother(Card cardToMove, Card previousCard, int targetColumn)
-        {
-            int sort = previousCard.Sort;
-            var cards = store.FindAll(c => c.ColumnID == targetColumn && c.Sort > sort);
-            foreach (var card in cards) card.Sort++;
-
-            cardToMove.ColumnID = targetColumn;
-            cardToMove.Sort = sort + 1;
-
-            return cardToMove;
         }
     }
 }

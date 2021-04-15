@@ -71,21 +71,6 @@ namespace KanbanTests
         }
 
         [Fact]
-        public async void TestMoveCardRepositoryCalls()
-        {
-            var card1 = new Card() { ID = 5, Title = "Test", ColumnID = 3, Sort = 1 };
-            var card2 = new Card() { ID = 6, Title = "Test", ColumnID = 3, Sort = 2 };
-            await cardRepo.AddCard(card1);
-            await cardRepo.AddCard(card2);
-
-            await cardService.MoveCard(5, new CardMove() { ColumnId = 3, PreviousCardId = 6 });
-            Assert.Equal(0, cardRepo.InvokedWithNullPreviosCard);
-
-            await cardService.MoveCard(5, new CardMove() { ColumnId = 3, PreviousCardId = null });
-            Assert.Equal(1, cardRepo.InvokedWithNullPreviosCard);
-        }
-
-        [Fact]
         public async void TestMoveCardRepositoryExceptions()
         {
             var card1 = new Card() { ID = 7, Title = "Test", ColumnID = 4, Sort = 1 };

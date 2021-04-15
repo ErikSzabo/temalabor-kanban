@@ -52,16 +52,19 @@ namespace Kanban.Bll
             // If there isn't a card to move after, then move the card to the top.
             if(cardMove.PreviousCardId == null)
             {
-                var movedCard = await repository.MoveCard(cardToMove, null, targetColumn);
-                return new CardDto(movedCard);
-            } 
-            else
-            {
-                var previousCard = await repository.GetCard((int)cardMove.PreviousCardId);
-                if (previousCard.ColumnID != targetColumn) throw new BadRequestException("Provided columnId and the previous card columnId does not match");
-                var movedCard = await repository.MoveCard(cardToMove, previousCard, targetColumn);
-                return new CardDto(movedCard);
-            }
+                var firstCardInColumn = await repository.GetFirstCardInColumn(targetColumn);
+                if(firstCardInColumn == null)
+                {
+                    var movedTopCardInEmptyColumn = await repository.MoveCardTopInEmptyColumn(cardToMove, targetColumn);
+                    return new CardDto(movedTopCardInEmptyColumn);
+                }
+                var movedTopCard = await repository.MoveCardTop(cardToMove, firstCardInColumn, targetColumn);
+                return new CardDto(movedTopCard);
+            }   
+            var previousCard = await repository.GetCard((int)cardMove.PreviousCardId);
+            if (previousCard.ColumnID != targetColumn) throw new BadRequestException("Provided columnId and the previous card columnId does not match");
+            var movedCard = await repository.MoveCardAfterAnother(cardToMove, previousCard, targetColumn);
+            return new CardDto(movedCard);
         }
 
         private async Task CheckCardExistance(int cardID)

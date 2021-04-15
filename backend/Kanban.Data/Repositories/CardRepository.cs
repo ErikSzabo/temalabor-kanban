@@ -77,40 +77,27 @@ namespace Kanban.Data.Repositories
                     .FirstOrDefaultAsync();
         }
 
-        public async Task<Card> MoveCard(Card cardToMove, Card previousCard, int targetColumn)
+        public async Task<Card> MoveCardTop(Card cardToMove, Card currentFirstCard, int targetColumn) 
         {
-            // If the doesn't have a previos card, the card should be moved to the top
-            if (previousCard == null)
+            using var transaction = await kanbanContext.Database.BeginTransactionAsync();
+            try
             {
-                // If we doesn't have any card in the column, we just add the card with the position of 0
-                var firstCard = await GetFirstCardInColumn(targetColumn);
-                if (firstCard == null)
-                {
-                    return await MoveCardTopToEmptyColumn(cardToMove, targetColumn);
-                } 
-
-                // If we have the first card, then this card will get its place and every other card
-                // position will be incremented
-                return await MoveCardTop(cardToMove, firstCard, targetColumn);
+                int firstSort = currentFirstCard.Sort;
+                await kanbanContext.Database.ExecuteSqlInterpolatedAsync($"UPDATE [Card] SET [Sort] = [Sort] + 1 WHERE [ColumnID] = {targetColumn};");
+                cardToMove.Sort = firstSort;
+                cardToMove.ColumnID = targetColumn;
+                await kanbanContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return cardToMove;
+            } 
+            catch(Exception)
+            {
+                await transaction.RollbackAsync();
+                throw;
             }
-
-            // If we have the previous card, increment position for everything after the previos card
-            // then insert the card at the previous card position + 1
-            return await MoveCardAfterAnother(cardToMove, previousCard, targetColumn);
         }
 
-
-        private async Task<Card> MoveCardTop(Card cardToMove, Card currentFirstCard, int targetColumn) 
-        {
-            int firstSort = currentFirstCard.Sort;
-            await kanbanContext.Database.ExecuteSqlInterpolatedAsync($"UPDATE [Card] SET [Sort] = [Sort] + 1 WHERE [ColumnID] = {targetColumn};");
-            cardToMove.Sort = firstSort;
-            cardToMove.ColumnID = targetColumn;
-            await kanbanContext.SaveChangesAsync();
-            return cardToMove;
-        }
-
-        private async Task<Card> MoveCardTopToEmptyColumn(Card cardToMove, int targetColumn)
+        public async Task<Card> MoveCardTopInEmptyColumn(Card cardToMove, int targetColumn)
         {
             cardToMove.Sort = 0;
             cardToMove.ColumnID = targetColumn;
@@ -118,18 +105,29 @@ namespace Kanban.Data.Repositories
             return cardToMove;
         }
 
-        private async Task<Card> MoveCardAfterAnother(Card cardToMove, Card previousCard, int targetColumn)
+        public async Task<Card> MoveCardAfterAnother(Card cardToMove, Card previousCard, int targetColumn)
         {
-            int sort = previousCard.Sort;
-            await kanbanContext.Database.ExecuteSqlInterpolatedAsync(
-                    $"UPDATE [Card] SET [Sort] = [Sort] + 1 WHERE [ColumnID] = {targetColumn} AND [Sort] > {sort};"
-                );
+            using var transaction = await kanbanContext.Database.BeginTransactionAsync();
+            try
+            {
+                int sort = previousCard.Sort;
+                await kanbanContext.Database.ExecuteSqlInterpolatedAsync(
+                        $"UPDATE [Card] SET [Sort] = [Sort] + 1 WHERE [ColumnID] = {targetColumn} AND [Sort] > {sort};"
+                    );
 
-            cardToMove.ColumnID = targetColumn;
-            cardToMove.Sort = sort + 1;
+                cardToMove.ColumnID = targetColumn;
+                cardToMove.Sort = sort + 1;
 
-            await kanbanContext.SaveChangesAsync();
-            return cardToMove;
+                await kanbanContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return cardToMove;
+            }
+            catch(Exception)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+            
         }
     }
 }

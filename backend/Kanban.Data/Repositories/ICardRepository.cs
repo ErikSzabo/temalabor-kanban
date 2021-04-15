@@ -12,6 +12,9 @@ namespace Kanban.Data.Repositories
         Task<List<Card>> GetCardsByColumn(int columnID);
         Task<Card> GetFirstCardInColumn(int columnID);
         Task<Card> GetLastCardInColumn(int columnID);
-        Task<Card> MoveCard(Card cardToMove, Card previousCard, int targetColumn);
+        Task<Card> MoveCardTop(Card cardToMove, Card currentFirstCard, int targetColumn);
+        Task<Card> MoveCardTopInEmptyColumn(Card cardToMove, int targetColumn);
+        Task<Card> MoveCardAfterAnother(Card cardToMove, Card previousCard, int targetColumn);
+
     }
 }
