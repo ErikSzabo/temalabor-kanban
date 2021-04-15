@@ -7,8 +7,19 @@ using System.Threading.Tasks;
 
 namespace Kanban.Bll.Models
 {
-    public sealed record ColumnDto(
-        [Required] int ID,
-        [Required] [StringLength(100)] string Name
-    );
+    public class ColumnDto
+    {
+        [Required]
+        public int ID { get; set; }
+
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; }
+
+        public ColumnDto(int ID, string name)
+        {
+            this.ID = ID;
+            this.Name = name;
+        }
+    }
 }
